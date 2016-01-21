@@ -27,12 +27,11 @@ fn main() {
     // loop until we receive a QuitEvent
     'event : loop {
         for event in events.poll_iter() {
-            //println!("{:?}",event.Window.window_id );
             match event {
-                Event::Window{window_id: truc,  win_event_id: window, ..} => 
+                Event::Window{window_id,  win_event_id:window_event_id, ..} =>
                     {
-                        println!("{:?} ==> {:?}", truc, window );
-                        match window {
+                        println!("{:?} ==> {:?}", window_id, window_event_id );
+                        match window_event_id {
                             sdl2::event::WindowEventId::Close => break 'event,
                             _ => continue,
                         }
