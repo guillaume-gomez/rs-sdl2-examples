@@ -17,22 +17,24 @@ fn main() {
     // };
 
     
-    let mut renderer = match first_window.renderer().build() {
-         Ok(renderer) => renderer,
-         Err(err) => panic!("failed to create renderer: {}", err)
-     };
-    let _ = renderer.present();
+    // let mut renderer = match first_window.renderer().build() {
+    //      Ok(renderer) => renderer,
+    //      Err(err) => panic!("failed to create renderer: {}", err)
+    //  };
+    // let _ = renderer.present();
 
     let mut events = ctx.event_pump().unwrap();
-    // loop until we receive a QuitEvent
-    'event : loop {
+    let id  :&u32 = &first_window.id();
+    let mut window_ids_vec = vec![id];
+    // loop until we receive a QuitEvent 
+    while window_ids_vec.len() > 0 {
         for event in events.poll_iter() {
             match event {
                 Event::Window{window_id,  win_event_id:window_event_id, ..} =>
                     {
                         println!("{:?} ==> {:?}", window_id, window_event_id );
                         match window_event_id {
-                            sdl2::event::WindowEventId::Close => break 'event,
+                            sdl2::event::WindowEventId::Close =>  window_ids_vec.retain(|&id| *id != window_id),
                             _ => continue,
                         }
                     },
