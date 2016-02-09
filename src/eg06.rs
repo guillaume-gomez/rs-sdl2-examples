@@ -35,7 +35,7 @@ fn main() {
             match event {
                 Event::Window{window_id,  win_event_id:window_event_id, ..} =>
                     {
-                        println!("{:?} ==> {:?}", window_id, window_event_id );
+                        println!("window[ {:?} ] ==> {:?}", window_id, window_event_id );
                         match window_event_id {
                             sdl2::event::WindowEventId::Close =>  
                             { 
