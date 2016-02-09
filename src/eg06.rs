@@ -11,7 +11,13 @@ fn build_window(video_ctx: &VideoSubsystem, title: &str) -> (Window) {
         Ok(window) => window,
         Err(err)   => panic!("failed to create window: {}", err)
     };
-    return window;
+
+    let mut renderer = match window.renderer().build() {
+        Ok(renderer) => renderer,
+        Err(err) => panic!("failed to create renderer: {}", err)
+    };
+    let _ = renderer.present();
+    return renderer.into_window().unwrap();
 }
 
 fn main() {
@@ -19,15 +25,9 @@ fn main() {
     let video_ctx = ctx.video().unwrap();
 
     let mut window_ids_vec = Vec::new();
-    
-    window_ids_vec.push(build_window(&video_ctx, "first_window"));
+    let title = format!("{} Window", window_ids_vec.len() + 1);
+    window_ids_vec.push(build_window(&video_ctx, &title));
        
-    // let mut renderer = match first_window.renderer().build() {
-    //      Ok(renderer) => renderer,
-    //      Err(err) => panic!("failed to create renderer: {}", err)
-    //  };
-    // let _ = renderer.present();
-
     let mut events = ctx.event_pump().unwrap();
     // loop until we receive a QuitEvent 
     while window_ids_vec.len() > 0 {
@@ -44,9 +44,12 @@ fn main() {
                             _ => continue,
                         }
                     },
-                Event::KeyDown { keycode: Some(Keycode::N), .. } =>  
-                    window_ids_vec.push(build_window(&video_ctx, "another window")) ,
-                _               => continue
+                Event::KeyDown { keycode: Some(Keycode::N), .. } => 
+                    {
+                        let title = format!("{} Window ", window_ids_vec.len() + 1);
+                        window_ids_vec.push(build_window(&video_ctx, &title));
+                    },
+                _  => continue
             }
         }
     }
