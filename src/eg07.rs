@@ -6,6 +6,7 @@ use sdl2::event::{Event};
 use sdl2::surface::{Surface};
 use sdl2::render::{Texture, Renderer};
 use sdl2::rect::{Rect};
+use sdl2::keyboard::{Keycode};
 
 pub struct Sprite {
     tex: Texture,
@@ -33,7 +34,7 @@ impl Sprite {
     }
 }
 
-
+const OFFSET: i32 = 2;
 
 fn main() {
     let ctx = sdl2::init().unwrap();
@@ -52,23 +53,24 @@ fn main() {
 
     let test = Sprite::new("jkfkjfdkj", &mut renderer);
 
-    let _ = renderer.clear();
-    // Display the texture.
-    // Omitting the src & dst Rect arguments will cause our image to stretch across the entire buffer.
-    // Try passing Some(surface.get_rect()) for src & dst instead of None & see how things change.
-    let _ = renderer.copy(&test.tex, None, Rect::new(100, 100, 128, 128).unwrap());
-    let _ = renderer.present();
-    
     let mut events = ctx.event_pump().unwrap();
-
+    let mut x = 0;
+    let mut y = 0;
     // loop until we receive a QuitEvent
     'event : loop {
         for event in events.poll_iter() {
             match event {
                 Event::Quit{..} => break 'event,
+                Event::KeyDown {keycode: Some(Keycode::Right), .. } => x += OFFSET,
+                Event::KeyDown {keycode: Some(Keycode::Left), .. } => x -= OFFSET,
+                Event::KeyDown {keycode: Some(Keycode::Up), .. } => y -= OFFSET,
+                Event::KeyDown {keycode: Some(Keycode::Down), .. } => y += OFFSET,
                 _               => continue
             }
         }
+        let _ = renderer.clear();
+        let _ = renderer.copy(&test.tex, None, Rect::new(x, y, 128, 128).unwrap());
+        let _ = renderer.present();
     }
 }
 
